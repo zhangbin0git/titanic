@@ -95,12 +95,6 @@ data['Fare_1'] = data['Fare'].map(fare_cmp)
 data['Age_1']=data['Age'].map(age_cmp)
 
 
-# In[253]:
-
-
-data
-
-
 # In[254]:
 
 
@@ -195,4 +189,4 @@ def ratio_three(data_cache, key_1, key_2, key_3):
 ratio_three(data_mu_age, 'Pclass', 'Sex', 'Age_1')
 
 
-# ## 结论：提出没有年龄的人员后，从图中看出富有的女性和孩子生还率高。
+# ## 结论：删除没有年龄的人员后，从图中推论富有的女性和孩子生还率高。由于其中的限制条件和位置因素很多，例如随行人员的影响，所以此次只是从部分数据中推论如此，此次的数据表现的只是相关性，并无因果关系，随着分析的完善，可能会有更多的发现。
