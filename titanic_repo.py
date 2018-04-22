@@ -200,7 +200,7 @@ bins_three = [0, 10, 60, 120]
 data_mu_age.loc[:,'Age_group']= pd.cut(data_mu_age['Age'], bins_three)
 
 
-# In[17]:
+# In[35]:
 
 
 def ratio_three(data_cache, key_1, key_2, key_3):
@@ -215,6 +215,8 @@ def ratio_three(data_cache, key_1, key_2, key_3):
     #分组存活率
     result_ratio = group_cache['Survived'].describe().loc[:,('count', 'mean')]
     result_ratio['mean'] = result_ratio['mean'] * 100
+    # 更换了columns的名字
+    result_ratio.rename(columns={'count':'people', 'mean':'survival rate'}, inplace=True)
     print result_ratio
     # 开始画图
     
@@ -227,13 +229,13 @@ def ratio_three(data_cache, key_1, key_2, key_3):
 #     plt.subplots_adjust(left=0.2, bottom=2, right=0.8, top=4, hspace=0.6, wspace=0.3)
     # 各组的存活率
 #     plt.subplot(212)
-    result_ratio.plot(kind='bar')
+    result_ratio.plot(kind='bar', figsize=(10,8))
     plt.title( '{0} and {1} and {2}-grouped survival rate'.format(key_1, key_2, key_3))
     plt.ylabel('%')
     plt.xlabel('{0} and {1} and {2}-group'.format(key_1, key_2, key_3))
 
 
-# In[18]:
+# In[36]:
 
 
 ratio_three(data_mu_age, 'Pclass', 'Sex', 'Age_group')
