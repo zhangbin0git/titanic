@@ -20,12 +20,13 @@
 # ### 我分析可能的因素为1、性别  2、年龄   3、票类/票价   4.孩子有父母和女性有配偶或兄弟生还率将增大
 # 
 
-# In[1]:
+# In[88]:
 
 
 # 导入相关包数据
 get_ipython().magic(u'pylab inline')
 import numpy as py
+import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 sns.set(color_codes=True)
@@ -200,48 +201,44 @@ bins_three = [0, 10, 60, 120]
 data_mu_age.loc[:,'Age_group']= pd.cut(data_mu_age['Age'], bins_three)
 
 
-# In[35]:
+# In[99]:
 
 
 def ratio_three(data_cache, key_1, key_2, key_3):
     """分析三个变量分组人口数目及存活率，以饼图和柱状图输出"""
-    # 返回key_1, key_2, key_3分组的存活率。同时打印各组的人口数目和存活比率
-    # 分组
-    group_cache = data_cache.groupby([key_1, key_2, key_3])
-    # 各分组中的人数
-#     ratio_count =  group_cache['PassengerId'].count()
-    # 设置name
-#     ratio_count.name = ''
-    #分组存活率
-    result_ratio = group_cache['Survived'].describe().loc[:,('count', 'mean')]
-    result_ratio['mean'] = result_ratio['mean'] * 100
-    # 更换了columns的名字
-    result_ratio.rename(columns={'count':'people', 'mean':'survival rate'}, inplace=True)
-    print result_ratio
-    # 开始画图
+    # 返回key_1, key_2, key_3分组的存活率。同时打印各组的人口数目和存活比率key1=Sex
     
-    # 各组的人数
-#     plt.subplot(211)
-#     plt.title('Population ratio in each group \n The total number is {} people'.format(data_cache.count()[key_1]))
-#     plt.ylabel('people')
-#     plt.xlabel('{0} and {1} and {2}-group'.format(key_1, key_2, key_3))
-#     ratio_count.plot(kind='bar')
-#     plt.subplots_adjust(left=0.2, bottom=2, right=0.8, top=4, hspace=0.6, wspace=0.3)
-    # 各组的存活率
-#     plt.subplot(212)
-    result_ratio.plot(kind='bar', figsize=(10,8))
-    plt.title( '{0} and {1} and {2}-grouped survival rate'.format(key_1, key_2, key_3))
-    plt.ylabel('%')
-    plt.xlabel('{0} and {1} and {2}-group'.format(key_1, key_2, key_3))
+    # subset data by Sex
+    data_male = data_cache[data_cache[key_1] == 'male']
+    data_female = data_cache[data_cache[key_1] == 'female']
+    
+    # 开始绘图，包括男性人数和生还率
+    plt.figure()
+    data_male.groupby([key_2, key_3]).size().unstack().plot(kind='bar', stacked=False)
+    plt.title( '{} and {} count for male passengers'.format(key_2, key_3))
+    plt.ylabel('Count') 
+    (data_male.groupby([key_2, key_3]).mean()['Survived'].unstack() * 100).plot(kind='bar', stacked=False)
+    plt.title( '{} and {} survival rate for male passengers'.format(key_2, key_3))
+    plt.ylabel('rate  %')   
+    plt.show()
+    
+    # 开始绘图，包括女性人数和生还率
+    plt.figure()
+    data_female.groupby([key_2, key_3]).size().unstack().plot(kind='bar', stacked=False)
+    plt.title( '{} and {} count for female passengers'.format(key_2, key_3))
+    plt.ylabel('Count')    
+    (data_female.groupby([key_2, key_3]).mean()['Survived'].unstack() * 100).plot(kind='bar', stacked=False)
+    plt.title( '{} and {} survival rate for female passengers'.format(key_2, key_3))
+    plt.ylabel('rate  %')   
 
 
-# In[36]:
+
+# In[100]:
 
 
-ratio_three(data_mu_age, 'Pclass', 'Sex', 'Age_group')
+ratio_three(data_mu_age, 'Sex', 'Pclass', 'Age_group')
 
 
 # ## 结论：
-# ## 图中count代表各个分组中的人数，mean代表分组的生还率。我查了很多资料想改名字，但是没有找到，请见谅。
 # 
 # ## 对数据进行缺失值清理后，根据生还比率和该分组的人数分析，从图中推论富有的女性和孩子生还率高。其中孩子的分组中人数比较少，考虑由于本身船上10以下的孩子比较少，并且所以有关10岁以下富有的孩子的分组，生还率都很高，所以认为以上假设成立。由于其中的限制条件和位置因素很多，例如随行人员的影响，所以此次只是从部分数据中推论如此，此次的数据表现的只是相关性，并无因果关系，随着分析的完善，可能会有更多的发现。
